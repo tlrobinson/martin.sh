@@ -1,0 +1,16 @@
+wwwoosh
+=======
+
+a simple HTTP / CGI server written in shell, using netcat for a socket
+
+martin
+======
+
+a (sort of) sinatra-like web application framework for bash (yes, bash), with a CGI interface
+
+notes
+=====
+
+hopefully it's obvious, but these projects are for fun and not meant to be taken seriously. wwwoosh can only handle about 2 request per second (any additional fail completely), not to mention there's probably some pretty nasty security issues with it.
+
+it is, however, a testament to the simplicity of HTTP, and the power of unix shells
