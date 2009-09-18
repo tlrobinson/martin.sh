@@ -6,7 +6,21 @@ a simple HTTP / CGI server written in shell, using netcat for a socket
 martin
 ======
 
-a (sort of) sinatra-like web application framework for bash (yes, bash), with a CGI interface
+a (sort of) sinatra-like web application framework for bash (yes, bash), with a CGI interface.
+
+define handlers like this:
+
+    get "/redirect" redirect_handler
+    function redirect_handler () {
+        status 302
+        header "Location" "http://jackjs.org/"
+    }
+    
+    get "/DeanMartin.jpg" dean_handler
+    function dean_handler () {
+        header "Content-Type" "image/jpeg"
+        cat "DeanMartin.jpg"
+    }
 
 notes
 =====
