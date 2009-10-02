@@ -32,7 +32,7 @@ function handle_request () {
     
     export SCRIPT_NAME=""
     export SERVER_NAME="localhost"
-    export SERVER_port="$port"
+    export SERVER_PORT="$port"
 
     "$app"
 }
