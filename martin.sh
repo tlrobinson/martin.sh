@@ -1,4 +1,4 @@
-source wwwoosh.sh
+. wwwoosh.sh
 
 martin_response="/tmp/martin_response"
 
@@ -6,29 +6,29 @@ routes_method=()
 routes_path=()
 routes_action=()
 
-function route () {
+route () {
     routes_method=( ${routes_method[@]} "$1" )
     routes_path=( ${routes_path[@]} "$2" )
     routes_action=( ${routes_action[@]} "$3" )
 }
 
-function get () {
+get () {
     route "GET" $@
 }
 
-function post () {
+post () {
     route "POST" $@
 }
 
-function delete () {
+delete () {
     route "DELETE" $@
 }
 
-function status () {
+status () {
     response_status="$1"
 }
 
-function header () {
+header () {
     head="$1: $2"
     if [ "$response_headers" ]; then
         response_headers="$response_headers\n$head"
@@ -37,7 +37,7 @@ function header () {
     fi
 }
 
-function not_found () {
+not_found () {
     status "404"
     header "Content-type" "text/plain"
     if [ $# -gt 0 ]; then
@@ -47,28 +47,28 @@ function not_found () {
     fi
 }
 
-function martin_dispatch () {
+martin_dispatch () {
     action=""
-    
+
     for (( i = 0 ; i < ${#routes_method[@]} ; i++ )); do
         method=${routes_method[$i]}
         path=${routes_path[$i]}
         act=${routes_action[$i]}
-        if [ "$REQUEST_METHOD" == "$method" ]; then
-            if [ "$PATH_INFO" == "$path" ]; then
+        if [ "$REQUEST_METHOD" = "$method" ]; then
+            if [ "$PATH_INFO" = "$path" ]; then
                 action="$act"
                 break
             fi
         fi
     done
-    
+
     [ ! "$action" ] && action="not_found"
-    
+
     reset_response
-    
+
     # execute the action, storing output in a temporary file
     "$action" > "$martin_response"
-    
+
     # set status header, echo headers, blank line, then body
     header "Status" "$response_status"
     echo "$response_headers"
@@ -76,7 +76,7 @@ function martin_dispatch () {
     cat "$martin_response"
 }
 
-function reset_response () {
+reset_response () {
     response_status="200 OK"
     response_headers=""
 }

@@ -1,9 +1,9 @@
 #!/bin/sh
 
-source martin.sh
+. martin.sh
 
 get "/" root
-function root () {
+root () {
     header "Content-Type" "text/html"
     cat <<EOT
 <html>
@@ -21,19 +21,19 @@ EOT
 }
 
 get "/ps" ps_handler
-function ps_handler () {
+ps_handler () {
     header "Content-Type" "text/plain"
     ps aux
 }
 
 get "/DeanMartin.jpg" dean_handler
-function dean_handler () {
+dean_handler () {
     header "Content-Type" "image/jpeg"
     cat "DeanMartin.jpg"
 }
 
 get "/redirect" redirect_handler
-function redirect_handler () {
+redirect_handler () {
     status 302
     header "Location" "http://jackjs.org/"
 }
