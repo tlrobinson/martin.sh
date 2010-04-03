@@ -56,8 +56,12 @@ function handle_response () {
         fi
     done
 
+    # Date
+    header="Date: $(date -u '+%a, %d %b %Y %R:%S GMT')"
+    response_headers="$response_headers$CRLF$header"
+
     # echo status line, headers, blank line, body
-    echo "$http_version $response_status$CRLF$response_headers$CRLF"
+    echo "$http_version $response_status$CRLF$response_headers$CRLF$CR"
     cat
 }
 
