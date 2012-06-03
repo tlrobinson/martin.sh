@@ -8,7 +8,7 @@ root () {
     cat <<EOT
 <html>
     <head>
-        <title>hello world from $PATH_INFO<title>
+        <title>hello world from $PATH_INFO</title>
     </head>
     <body>
         <img src="/DeanMartin.jpg">
