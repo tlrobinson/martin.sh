@@ -10,6 +10,20 @@ a (sort of) sinatra-like web application framework for bash (yes, bash), with a 
 
 define handlers like this:
 
+    get "/" index; index () {
+        header "Content-Type" "text/html"
+        cat <<EOT
+    <html>
+      <head>
+        <title>hello world</title>
+      </head>
+      <body>
+        PATH_INFO=$PATH_INFO
+      </body>
+    </html>
+    EOT
+    }
+
     get "/redirect" redirect_handler; redirect_handler () {
         status 302
         header "Location" "http://jackjs.org/"
