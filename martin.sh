@@ -1,16 +1,3 @@
-. wwwoosh.sh
-
-martin_response="/tmp/martin_response"
-
-routes_method=()
-routes_path=()
-routes_action=()
-
-route () {
-    routes_method=( ${routes_method[@]} "$1" )
-    routes_path=( ${routes_path[@]} "$2" )
-    routes_action=( ${routes_action[@]} "$3" )
-}
 
 get () {
     route "GET" $@
@@ -25,16 +12,11 @@ delete () {
 }
 
 status () {
-    response_status="$1"
+    martin_response_status="$1"
 }
 
 header () {
-    head="$1: $2"
-    if [ "$response_headers" ]; then
-        response_headers="$response_headers\n$head"
-    else
-        response_headers="$head"
-    fi
+    martin_response_headers="$martin_response_headers$1: $2$LF"
 }
 
 not_found () {
@@ -47,36 +29,59 @@ not_found () {
     fi
 }
 
-martin_dispatch () {
-    action=""
+LF=$'\n'
 
-    for (( i = 0 ; i < ${#routes_method[@]} ; i++ )); do
-        method=${routes_method[$i]}
-        path=${routes_path[$i]}
-        act=${routes_action[$i]}
-        if [ "$REQUEST_METHOD" = "$method" ]; then
-            if [ "$PATH_INFO" = "$path" ]; then
-                action="$act"
-                break
-            fi
-        fi
-    done
+# route: method, path, action
+martin_routes=""
+
+route () {
+    martin_routes="$martin_routes$1,$2,$3$LF"
+}
+
+martin_find_route () {
+  echo "$martin_routes" | while IFS="," read -r method path action; do
+    if [ "$1" = "$method" ] && [ "$2" = "$path" ]; then
+        echo $action
+        return
+    fi
+  done
+}
+
+martin_response_headers=""
+martin_response_status=""
+martin_response_file="$TMPDIR/martin_response$$"
+
+martin_reset_response () {
+    martin_response_status="200 OK"
+    martin_response_headers=""
+}
+
+martin_dispatch () {
+    local action="$(martin_find_route "$REQUEST_METHOD" "$PATH_INFO")"
 
     [ ! "$action" ] && action="not_found"
 
-    reset_response
+    martin_reset_response
 
     # execute the action, storing output in a temporary file
-    "$action" > "$martin_response"
+    "$action" > "$martin_response_file"
 
-    # set status header, echo headers, blank line, then body
-    header "Status" "$response_status"
-    echo "$response_headers"
-    echo ""
-    cat "$martin_response"
+    # set status header and content-length header
+    header "Status" "$martin_response_status"
+    header "Content-Length" "$(wc -c "$martin_response_file" | awk '{ print $1 }')"
+
+    # echo headers, blank line, then body
+    echo "$martin_response_headers"
+    cat "$martin_response_file"
 }
 
-reset_response () {
-    response_status="200 OK"
-    response_headers=""
+martin () {
+  if [ $REQUEST_METHOD ]; then
+    # as a CGI script
+    martin_dispatch
+  else
+    # standalone using the wwwoosh server
+    . ./wwwoosh.sh
+    wwwoosh martin_dispatch $PORT
+  fi
 }
