@@ -1,12 +1,15 @@
+martin and wwwwoosh
+===================
+
 wwwoosh
-=======
+-------
 
 a simple HTTP / CGI server written in shell, using netcat for a socket
 
 martin
-======
+------
 
-a (sort of) sinatra-like web application framework for bash (yes, bash), with a CGI interface.
+a sinatra-like web application framework, written in shell, with a CGI interface.
 
 define handlers like this:
 
@@ -27,7 +30,7 @@ EOT
 
 get "/redirect" redirect_handler; redirect_handler () {
     status 302
-    header "Location" "http://jackjs.org/"
+    header "Location" "https://github.com/tlrobinson/martin.sh/"
 }
 
 get "/DeanMartin.jpg" dean_handler; dean_handler () {
@@ -37,8 +40,8 @@ get "/DeanMartin.jpg" dean_handler; dean_handler () {
 ```
 
 notes
-=====
+-----
 
 hopefully it's obvious, but these projects are for fun and not meant to be taken seriously. wwwoosh can only handle about 2 request per second (any additional fail completely), not to mention there's probably some pretty nasty security issues with it.
 
-it is, however, a testament to the simplicity of HTTP, and the power of unix shells
+it is, however, a demonstration of the simplicity of HTTP, and the power of unix shells
